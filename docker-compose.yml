@@ -1,0 +1,74 @@
+# version field is obsolete in newer Docker Compose
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: service-desk-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: service_desk
+    ports:
+      - '5433:5432'  # Using 5433 on host to avoid conflicts
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./packages/backend
+      dockerfile: ../../docker/Dockerfile.backend
+    container_name: service-desk-backend
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: service_desk
+      JWT_SECRET: dev-secret-key-change-in-production
+      JWT_EXPIRATION: 7d
+      CORS_ORIGIN: http://localhost:3001,http://localhost:3002,http://localhost:3003,http://localhost:3004
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./packages/backend:/app
+      - /app/node_modules
+      - ./uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: npm run start:dev
+
+  admin-portal:
+    build:
+      context: ./packages/admin-portal
+      dockerfile: ../../docker/Dockerfile.frontend
+    container_name: service-desk-admin
+    ports:
+      - '3001:80'
+    volumes:
+      - ./packages/admin-portal:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+
+  customer-portal:
+    build:
+      context: ./packages/customer-portal
+      dockerfile: ../../docker/Dockerfile.frontend
+    container_name: service-desk-customer
+    ports:
+      - '3002:80'
+    volumes:
+      - ./packages/customer-portal:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
