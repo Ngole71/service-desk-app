@@ -403,9 +403,31 @@ npm run test:e2e --workspace=packages/backend
 
 ## 📚 Documentation
 
+### For Developers (Start Here!)
+
+- **[📖 Architecture Guide](./ARCHITECTURE.md)** - **Complete system architecture guide**
+  - How the application works (backend + frontend)
+  - Technology stack explained
+  - Request flow diagrams
+  - Common patterns and best practices
+  - Perfect for developers new to full-stack development!
+
+- **[🗃️ Class Diagram](./CLASS_DIAGRAM.md)** - **Database schema & relationships**
+  - Entity relationship diagrams
+  - Table structure details
+  - SQL constraints and indexes
+  - Sample data examples
+
+- **[🔴 API Documentation](http://localhost:3000/api/docs)** - **Interactive Swagger UI**
+  - Test all API endpoints in your browser
+  - See request/response formats
+  - Try API calls with authentication
+  - Auto-generated from code annotations
+
+### Feature Guides
+
 - **[Email Simulator Guide](./EMAIL_SIMULATOR_GUIDE.md)** - Complete guide for testing email-to-ticket
 - **[Email-to-Ticket Setup](./packages/backend/docs/EMAIL_TO_TICKET_SETUP.md)** - Production SendGrid configuration
-- **[API Documentation](http://localhost:3000/api/docs)** - Interactive Swagger docs (when backend is running)
 
 ## 🧪 Testing Scripts
 
